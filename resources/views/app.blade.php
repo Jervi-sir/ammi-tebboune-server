@@ -18,5 +18,7 @@
     </head>
     <body class="font-sans antialiased">
         @inertia
+
+        <script src="/tinymce/tinymce.min.js"></script>
     </body>
 </html>

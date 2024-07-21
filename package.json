@@ -22,5 +22,22 @@
         "tailwindcss": "^3.2.1",
         "typescript": "^5.0.2",
         "vite": "^5.0"
+    },
+    "dependencies": {
+        "@radix-ui/react-checkbox": "^1.1.1",
+        "@radix-ui/react-dialog": "^1.1.1",
+        "@radix-ui/react-dropdown-menu": "^2.1.1",
+        "@radix-ui/react-slot": "^1.1.0",
+        "@tinymce/tinymce-react": "^5.1.1",
+        "class-variance-authority": "^0.7.0",
+        "clsx": "^2.1.1",
+        "froala-editor": "^4.2.1",
+        "fs-extra": "^11.2.0",
+        "jodit": "^4.2.27",
+        "jodit-react": "^4.1.2",
+        "lucide-react": "^0.412.0",
+        "tailwind-merge": "^2.4.0",
+        "tailwindcss-animate": "^1.0.7",
+        "tinymce": "^7.2.1"
     }
 }
