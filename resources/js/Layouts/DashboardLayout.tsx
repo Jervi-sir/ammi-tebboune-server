@@ -36,6 +36,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/Components/ui/sheet";
 const Routes = [
   { name: 'Add Article', url: '/article/publish', icon: <CirclePlus className="h-4 w-4" /> },
   { name: 'Articles', url: '/articles', icon: <Newspaper className="h-4 w-4" /> },
+  { name: null, url: null, icon: null },
+  { name: 'Add Event', url: '/event/publish', icon: <CirclePlus className="h-4 w-4" /> },
 ];
 
 export default function DashboardLayout({ title = "", children }) {
@@ -64,6 +66,8 @@ export default function DashboardLayout({ title = "", children }) {
               <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
                 {
                   Routes.map((menu, index) => (
+                    menu.name !== null
+                    ?
                     <a
                       key={index}
                       href={menu.url}
@@ -73,6 +77,10 @@ export default function DashboardLayout({ title = "", children }) {
                       {menu.icon}
                       {menu.name}
                     </a>
+                    :
+                    <>
+                      <hr />
+                    </>
                   ))
                 }
               </nav>
@@ -103,6 +111,8 @@ export default function DashboardLayout({ title = "", children }) {
                   </a>
                   {
                     Routes.map((menu, index) => (
+                      menu.name !== null
+                      ?
                       <a
                         key={index}
                         href={menu.url}
@@ -112,6 +122,10 @@ export default function DashboardLayout({ title = "", children }) {
                         {menu.icon}
                         {menu.name}
                       </a>
+                      :
+                      <>
+                        <hr />
+                      </>
                     ))
                   }
                 </nav>

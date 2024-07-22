@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +17,7 @@ Route::get('/', function () {
     ]);
 });
 
+// Articles
 Route::get('/article/publish', [ArticleController::class, 'showEditor'])->name('article.showEditor');
 Route::post('/article/publish', [ArticleController::class, 'publish'])->name('article.publish');
 Route::get('/articles', [ArticleController::class, 'listArticles'])->name('article.listArticles');
@@ -24,6 +26,10 @@ Route::delete('/articles/{id}', [ArticleController::class, 'destroy'])->name('ar
 Route::get('/articles/{id}/edit', [ArticleController::class, 'edit'])->name('article.edit');
 Route::post('/articles/{id}/update', [ArticleController::class, 'update'])->name('article.update');
 
+// Events
+Route::get('/event/publish', [EventController::class, 'showEditor'])->name('event.showEditor');
+Route::post('/event/publish', [EventController::class, 'publish'])->name('event.publish');
+Route::get('/events/{id}', [ArticleController::class, 'showEvent'])->name('event.showEvent');
 
 
 Route::get('/dashboard', function () {

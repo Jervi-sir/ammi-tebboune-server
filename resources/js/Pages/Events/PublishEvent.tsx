@@ -18,13 +18,30 @@ import { Head } from '@inertiajs/react';
 import ArticleEditor from '@/Components/dashboard/ArticleEditor';
 import ImageUploader from '@/Components/dashboard/ImageCropper';
 import { compressBase64Images, getCroppedImg } from '@/lib/ImageUtils';
+import { Calendar } from '@/Components/ui/calendar';
+import { DayPicker } from 'react-day-picker';
+import "react-day-picker/style.css";
+import LocationSelect from '@/Components/dashboard/LocationSelect';
+import CalendarInput from '@/Components/dashboard/CalendarInput';
 
-export default function PublishArticle({ categories }) {
+
+export default function PublishEvent() {
   const [preview, setPreview] = useState(null);
   const [croppedArea, setCroppedArea] = useState(null);
 
   const [isFetching, setIsFetching] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [location, setLocation] = useState('');
+  const [wilaya, setWilaya] = useState('');
+  const handleLocationChange = (value: string) => {
+    setLocation(value);
+  };
+  const handleWilayaChange = (value: string) => {
+    setWilaya(value);
+  };
+
 
   const [data, setData] = useState({
     title: '',
@@ -49,19 +66,23 @@ export default function PublishArticle({ categories }) {
     const croppedImage = await getCroppedImg(preview, croppedArea);
     const formData = new FormData();
     formData.append('title', data.title);
-    formData.append('category', data.category);
     formData.append('thumbnail', croppedImage);
     formData.append('summary', data.summary);
     formData.append('content', compressedContent);
 
+    formData.append('event_date', JSON.stringify(selectedDate, null, 2));
+    formData.append('location', location);
+
     try {
-      const response = await axios.post(route('article.publish'), formData, {
+      const response = await axios.post(route('event.publish'), formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
+      console.log('result: ', response.data);
+      return;
       const newUrl = response.data.url;
-      window.location.replace(newUrl);
+      // window.location.replace(newUrl);
 
     } catch (error) {
       console.error('Error publishing article:', error);
@@ -80,6 +101,7 @@ export default function PublishArticle({ categories }) {
   return (
     <DashboardLayout title='Add Article'>
       <Head title="Create Article" />
+      
       <form onSubmit={handleSubmit} className='flex flex-1 flex-col'>
         <div className='flex flex-1 flex-col p-2 gap-3'>
           <div className='flex flex-col md:flex-row justify-between gap-2'>
@@ -90,21 +112,21 @@ export default function PublishArticle({ categories }) {
                 onChange={(e) => setData((prevData) => ({ ...prevData, title: e.target.value }))}
                 required
               />
-              <Select onValueChange={(e) => setData((prevData) => ({ ...prevData, category: e }))} required>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Category</SelectLabel>
-                    {
-                      categories.map((category, index) => (
-                        <SelectItem value={category.name} key={index}>{category.name}</SelectItem>
-                      ))
-                    }
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <div className=''>
+                <CalendarInput
+                  selectedDate={selectedDate}
+                  setSelectedDate={setSelectedDate}
+                  errorMessage={errorMessage}
+                />
+              </div>
+              <div>
+                <LocationSelect
+                  location={location}
+                  setLocation={handleLocationChange}
+                  wilaya={wilaya}
+                  setWilaya={handleWilayaChange}
+                />
+              </div>
               <div className='flex-1 flex flex-col'>
                 <Textarea
                   className='flex-1'

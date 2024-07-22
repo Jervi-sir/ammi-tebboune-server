@@ -15,3 +15,7 @@ a journal for Ammi Teboune
   - [x] update article
   - [x] delete article
 - [x] view article
+- [ ] publish event
+- [ ] list events
+- [ ] edit event
+- [ ] delete event
