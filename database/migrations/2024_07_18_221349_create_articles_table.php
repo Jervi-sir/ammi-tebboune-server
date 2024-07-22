@@ -16,10 +16,11 @@ return new class extends Migration
             $table->string('title', 255);
             $table->text('content');
             $table->text('summary')->nullable();
-            $table->string('image_url', 255)->nullable();
+            $table->string('thumbnail', 255)->nullable();
             $table->date('published_date')->nullable();
+            $table->integer('nb_views')->default(0);
             $table->foreignId('category_id');
-            $table->bigInteger('author_id');
+            $table->bigInteger('author_id')->nullable();
             $table->foreign('author_id')->references('id')->on('users');
             $table->timestamps();
         });

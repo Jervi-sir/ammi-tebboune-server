@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -14,9 +16,15 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/editor', function () {
-    return Inertia::render('Editor');
-});
+Route::get('/article/publish', [ArticleController::class, 'showEditor'])->name('article.showEditor');
+Route::post('/article/publish', [ArticleController::class, 'publish'])->name('article.publish');
+Route::get('/articles', [ArticleController::class, 'listArticles'])->name('article.listArticles');
+Route::get('/articles/{id}', [ArticleController::class, 'showArticle'])->name('article.showArticle');
+Route::delete('/articles/{id}', [ArticleController::class, 'destroy'])->name('article.destroy');
+Route::get('/articles/{id}/edit', [ArticleController::class, 'edit'])->name('article.edit');
+Route::post('/articles/{id}/update', [ArticleController::class, 'update'])->name('article.update');
+
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
