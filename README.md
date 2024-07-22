@@ -10,12 +10,14 @@ a journal for Ammi Teboune
 - [x] list articles
   - [x] list them 
   - [x] paginate
-  - [ ] filter by category
+  - [x] filter by category
   - [x] edit article
   - [x] update article
   - [x] delete article
 - [x] view article
-- [ ] publish event
-- [ ] list events
-- [ ] edit event
-- [ ] delete event
+
+- [x] publish event
+- [x] view event
+- [x] list events
+- [x] edit event
+- [x] delete event

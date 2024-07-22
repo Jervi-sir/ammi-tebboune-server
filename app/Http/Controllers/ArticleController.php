@@ -162,11 +162,12 @@ class ArticleController extends Controller
             'thumbnail' => $data['thumbnail'] ? $data['thumbnail']->store('thumbnails', 'public') : $article->thumbnail,
             'content' => $content,
         ]);
-    
-        return redirect()->route('article.showArticle', ['id' => $article->id]);
-    }
-    
 
+        $url =  route('article.showArticle', ['id' => $article->id]);
+        return response()->json([
+            'url' => $url
+        ]);
+    }
 
     private function saveImagesAndReplaceSrc($content)
     {

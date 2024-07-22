@@ -1,27 +1,34 @@
-// ImageUploader.tsx
 import React, { useState, useCallback } from 'react';
 import { Input } from '@/Components/ui/input';
 import Cropper from 'react-easy-crop';
 import { Area } from 'react-easy-crop/types';
 
-const ImageUploader = ({ setCroppedArea, setPreview }) => {
-  const [preview, setLocalPreview] = useState(null);
+interface ImageUploaderProps {
+  setCroppedArea: (area: Area) => void;
+  setPreview?: (preview: string | ArrayBuffer | null) => void;
+  initialPreview?: string | null;
+}
+
+const ImageUploader: React.FC<ImageUploaderProps> = ({ setCroppedArea, setPreview, initialPreview = null }) => {
+  const [preview, setLocalPreview] = useState<string | ArrayBuffer | null>(initialPreview);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setLocalPreview(reader.result);
-        setPreview(reader.result);
+        if (setPreview) {
+          setPreview(reader.result);
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+  const onCropComplete = useCallback((croppedArea: Area, croppedAreaPixels: Area) => {
     setCroppedArea(croppedAreaPixels);
   }, [setCroppedArea]);
 
@@ -30,7 +37,7 @@ const ImageUploader = ({ setCroppedArea, setPreview }) => {
       <div className="image-preview h-[300px] overflow-hidden relative">
         {preview && (
           <Cropper
-            image={preview}
+            image={preview as string}
             crop={crop}
             zoom={zoom}
             aspect={1}
@@ -45,7 +52,7 @@ const ImageUploader = ({ setCroppedArea, setPreview }) => {
         type="file"
         accept="image/*"
         onChange={handleImageChange}
-        required
+        required={!initialPreview}
       />
     </div>
   );

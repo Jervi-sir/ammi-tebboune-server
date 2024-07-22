@@ -39,31 +39,25 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/Components/ui/alert-dialog";
+
 import { Head } from "@inertiajs/react";
 
-export default function PublishArticle({ articles, pagination, categories, selectedCategory }) {
-  const [articleToDelete, setArticleToDelete] = useState(null);
-  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState(selectedCategory || "");
+export default function ListEvents({ events, pagination,  }) {
+  const [eventToDelete, setEventToDelete] = useState(null);
 
   const handlePageChange = (url) => {
     if (url) {
       Inertia.visit(url, {
-        data: { category: selectedCategoryFilter },
+        data: {  },
       });
     }
   };
 
-  const handleCategoryChange = (e) => {
-    setSelectedCategoryFilter(e.target.value);
-    Inertia.visit('/articles', {
-      data: { category: e.target.value },
-    });
-  };
 
   const handleDelete = () => {
-    if (articleToDelete) {
-      Inertia.delete(route("article.destroy", { id: articleToDelete.id }));
-      setArticleToDelete(null);
+    if (eventToDelete) {
+      Inertia.delete(route("event.destroy", { id: eventToDelete.id }));
+      setEventToDelete(null);
     }
   };
 
@@ -80,7 +74,7 @@ export default function PublishArticle({ articles, pagination, categories, selec
           className={number === pagination.currentPage ? "bg-blue-400 text-white" : ""}
           onClick={(e) => {
             e.preventDefault();
-            handlePageChange("/articles?page=" + number);
+            handlePageChange("/events?page=" + number);
           }}
         >
           {number}
@@ -92,23 +86,11 @@ export default function PublishArticle({ articles, pagination, categories, selec
   return (
     <DashboardLayout>
       <div className="flex-1 flex flex-col gap-4">
-        <Head title="List Articles" />
+        <Head title="List events" />
         <div className="flex justify-between items-center p-4">
-          <h2 className="text-2xl font-bold">List Articles</h2>
+          <h2 className="text-2xl font-bold">List Events</h2>
           <div className="flex items-center gap-4">
-            <select
-              value={selectedCategoryFilter}
-              onChange={handleCategoryChange}
-              className="border border-gray-300 rounded-md p-2"
-            >
-              <option value="">All Categories</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-            <Button onClick={() => Inertia.visit(route("article.showEditor"))}>Create New Article</Button>
+            <Button onClick={() => Inertia.visit(route("event.showEditor"))}>Create New Event</Button>
           </div>
         </div>
         <Table>
@@ -118,7 +100,8 @@ export default function PublishArticle({ articles, pagination, categories, selec
                 <span className="sr-only">Image</span>
               </TableHead>
               <TableHead>Title</TableHead>
-              <TableHead>Category</TableHead>
+              <TableHead>event_date</TableHead>
+              <TableHead className="hidden md:table-cell">location</TableHead>
               <TableHead className="hidden md:table-cell">nb views</TableHead>
               <TableHead className="hidden md:table-cell">published date</TableHead>
               <TableHead>
@@ -127,28 +110,34 @@ export default function PublishArticle({ articles, pagination, categories, selec
             </TableRow>
           </TableHeader>
           <TableBody>
-            {articles.map((article, index) => (
+            {events.map((event, index) => (
               <TableRow key={index}>
                 <TableCell className="hidden sm:table-cell">
                   <img
                     alt="Product image"
                     className="aspect-square rounded-md object-cover"
                     height="64"
-                    src={article.thumbnail}
+                    src={event.thumbnail}
                     width="64"
                   />
                 </TableCell>
                 <TableCell className="font-medium">
                   <div className="flex flex-col">
-                    <span>{article.title}</span>
-                    <span className="font-normal opacity-80">{article.summary && article.summary.slice(0, 20)}...</span>
+                    <span>{event.title}</span>
+                    <span className="font-normal opacity-80">{event.summary && event.summary.slice(0, 20)}...</span>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant="outline">{article.category.name}</Badge>
+                  <Badge variant="outline">{ event.event_date }</Badge>
                 </TableCell>
-                <TableCell className="hidden md:table-cell">{article.nb_views}</TableCell>
-                <TableCell className="hidden md:table-cell">{article.created_at}</TableCell>
+                <TableCell className="hidden md:table-cell">
+                  <div className="flex flex-col">
+                    <span>{event.location}</span>
+                    <span className="font-normal opacity-80">{event.wilaya}</span>
+                  </div>
+                </TableCell>
+                <TableCell className="hidden md:table-cell">{event.nb_views}</TableCell>
+                <TableCell className="hidden md:table-cell">{event.created_at}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -159,19 +148,19 @@ export default function PublishArticle({ articles, pagination, categories, selec
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
-                        onClick={() => Inertia.visit(route("article.showArticle", { id: article.id }))}
+                        onClick={() => Inertia.visit(route("event.showEvent", { id: event.id }))}
                         className="cursor-pointer"
                       >
                         View
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() => Inertia.visit(route("article.edit", { id: article.id }))}
+                        onClick={() => Inertia.visit(route("event.edit", { id: event.id }))}
                         className="cursor-pointer"
                       >
                         Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem 
-                        onClick={() => setArticleToDelete(article)}
+                        onClick={() => setEventToDelete(event)}
                         className="cursor-pointer"
                       >
                         Delete
@@ -213,7 +202,7 @@ export default function PublishArticle({ articles, pagination, categories, selec
             </PaginationItem>
           </PaginationContent>
         </Pagination>
-        <AlertDialog open={!!articleToDelete} onOpenChange={setArticleToDelete}>
+        <AlertDialog open={!!eventToDelete} onOpenChange={setEventToDelete}>
           <AlertDialogTrigger asChild>
             <Button className="hidden">Open</Button>
           </AlertDialogTrigger>
@@ -221,11 +210,11 @@ export default function PublishArticle({ articles, pagination, categories, selec
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the article and remove it from our servers.
+                This action cannot be undone. This will permanently delete the event and remove it from our servers.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setArticleToDelete(null)}>Cancel</AlertDialogCancel>
+              <AlertDialogCancel onClick={() => setEventToDelete(null)}>Cancel</AlertDialogCancel>
               <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

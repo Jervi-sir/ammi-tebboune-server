@@ -34,7 +34,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ location, setLocation, 
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>Fruits</SelectLabel>
+              <SelectLabel>Wilaya</SelectLabel>
               <SelectItem value="apple">Apple</SelectItem>
               <SelectItem value="pineapple">Pineapple</SelectItem>
             </SelectGroup>

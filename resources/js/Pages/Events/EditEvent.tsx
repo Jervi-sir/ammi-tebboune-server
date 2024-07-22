@@ -1,4 +1,5 @@
-import React, { FormEventHandler, useState, useCallback } from 'react';
+import React, { FormEventHandler, useState, useCallback, useEffect } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Input } from '@/Components/ui/input';
 import {
@@ -11,44 +12,35 @@ import {
   SelectValue,
 } from "@/Components/ui/select";
 import { Textarea } from '@/Components/ui/textarea';
+import Cropper from 'react-easy-crop';
+import { Area } from 'react-easy-crop/types';
 import axios from 'axios';
+import imageCompression from 'browser-image-compression';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/Components/ui/button';
 import { Head } from '@inertiajs/react';
-import ArticleEditor from '@/Components/dashboard/ArticleEditor';
-import ImageUploader from '@/Components/dashboard/ImageCropper';
-import { compressBase64Images, getCroppedImg } from '@/lib/ImageUtils';
-import { Calendar } from '@/Components/ui/calendar';
-import { DayPicker } from 'react-day-picker';
-import "react-day-picker/style.css";
-import LocationSelect from '@/Components/dashboard/LocationSelect';
 import CalendarInput from '@/Components/dashboard/CalendarInput';
+import LocationSelect from '@/Components/dashboard/LocationSelect';
+import ImageUploader from '@/Components/dashboard/ImageCropper';
+import ArticleEditor from '@/Components/dashboard/ArticleEditor';
+import { compressBase64Images, getCroppedImg } from '@/lib/ImageUtils';
+import { format } from 'date-fns';
 
-
-export default function PublishEvent() {
-  const [preview, setPreview] = useState(null);
+export default function EditEvent({ event }) {
+  const [preview, setPreview] = useState(event.thumbnail ? `/storage/${event.thumbnail}` : null);
   const [croppedArea, setCroppedArea] = useState(null);
 
   const [isFetching, setIsFetching] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [location, setLocation] = useState('');
-  const [wilaya, setWilaya] = useState('');
-  const handleLocationChange = (value: string) => {
-    setLocation(value);
-  };
-  const handleWilayaChange = (value: string) => {
-    setWilaya(value);
-  };
-
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [data, setData] = useState({
-    title: '',
-    category: null,
+    title: event.title,
     thumbnail: null,
-    summary: '',
-    content: '',
+    summary: event.summary,
+    content: event.content,
+    location: event.location,
+    wilaya: event.wilaya,
+    event_date: event.event_date
   });
 
   const handleSubmit: FormEventHandler = async (e) => {
@@ -56,12 +48,15 @@ export default function PublishEvent() {
     setIsFetching(true);
     setErrorMessage('');
 
+    // Validate if content is not empty
     if (!data.content || data.content.trim() === '') {
       setErrorMessage('Content is required');
       setIsFetching(false);
       return;
     }
+    const formattedDate = data.event_date ? format(data.event_date, 'yyyy-MM-dd') : null;
 
+    // Compress images inside the content
     const compressedContent = await compressBase64Images(data.content);
     const croppedImage = await getCroppedImg(preview, croppedArea);
     const formData = new FormData();
@@ -69,12 +64,12 @@ export default function PublishEvent() {
     formData.append('thumbnail', croppedImage);
     formData.append('summary', data.summary);
     formData.append('content', compressedContent);
-    formData.append('event_date', JSON.stringify(selectedDate, null, 2));
-    formData.append('location', location);
-    formData.append('wilaya', wilaya);
+    formData.append('wilaya', data.wilaya);
+    formData.append('location', data.location);
+    formData.append('event_date', formattedDate);
 
     try {
-      const response = await axios.post(route('event.publish'), formData, {
+      const response = await axios.post(route('event.update', { id: event.id }), formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -83,7 +78,7 @@ export default function PublishEvent() {
       window.location.replace(newUrl);
 
     } catch (error) {
-      console.error('Error publishing article:', error);
+      console.error('Error updating article:', error);
     } finally {
       setIsFetching(false);
     }
@@ -97,32 +92,34 @@ export default function PublishEvent() {
   };
 
   return (
-    <DashboardLayout title='Add Article'>
-      <Head title="Create Article" />
-      
+    <DashboardLayout title='Edit Event'>
+      <Head title="Edit Event" />
+
       <form onSubmit={handleSubmit} className='flex flex-1 flex-col'>
         <div className='flex flex-1 flex-col p-2 gap-3'>
+          {/* Top */}
           <div className='flex flex-col md:flex-row justify-between gap-2'>
             <div className='flex-1 flex flex-col gap-2'>
               <Input
                 type="text"
                 placeholder="Title"
+                value={data.title}
                 onChange={(e) => setData((prevData) => ({ ...prevData, title: e.target.value }))}
                 required
               />
               <div className=''>
                 <CalendarInput
-                  selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
+                  selectedDate={data.event_date}
+                  setSelectedDate={(e) => setData((prevData) => ({ ...prevData, event_date: e }))}
                   errorMessage={errorMessage}
                 />
               </div>
               <div>
                 <LocationSelect
-                  location={location}
-                  setLocation={handleLocationChange}
-                  wilaya={wilaya}
-                  setWilaya={handleWilayaChange}
+                  location={data.location}
+                  setLocation={(e) => setData((prevData) => ({ ...prevData, location: e }))}
+                  wilaya={data.wilaya}
+                  setWilaya={(e) => setData((prevData) => ({ ...prevData, wilaya: e }))}
                 />
               </div>
               <div className='flex-1 flex flex-col'>
@@ -139,8 +136,9 @@ export default function PublishEvent() {
             </div>
             <div className=''>
               <ImageUploader 
+                initialPreview={preview}
                 setCroppedArea={setCroppedArea}
-                setPreview={setPreview}
+                setPreview={(preview) => setData((prevData) => ({ ...prevData, thumbnail: preview }))}
               />
             </div>
           </div>
@@ -159,10 +157,20 @@ export default function PublishEvent() {
               Please wait
             </Button>
             :
-            <Button>Button</Button>
+            <Button>Update Article</Button>
           }
         </div>
       </form>
     </DashboardLayout>
   );
+}
+
+
+function createImage(url) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener('load', () => resolve(image));
+    image.addEventListener('error', (error) => reject(error));
+    image.src = url;
+  });
 }

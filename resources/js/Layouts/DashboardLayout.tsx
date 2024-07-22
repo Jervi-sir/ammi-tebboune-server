@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Head, usePage } from '@inertiajs/react';
 import {
   Bell,
+  Calendar,
   CirclePlus,
   CircleUser,
   CopyPlus,
@@ -38,6 +39,7 @@ const Routes = [
   { name: 'Articles', url: '/articles', icon: <Newspaper className="h-4 w-4" /> },
   { name: null, url: null, icon: null },
   { name: 'Add Event', url: '/event/publish', icon: <CirclePlus className="h-4 w-4" /> },
+  { name: 'Events', url: '/events', icon: <Calendar className="h-4 w-4" /> },
 ];
 
 export default function DashboardLayout({ title = "", children }) {

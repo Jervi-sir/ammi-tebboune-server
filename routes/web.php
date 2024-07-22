@@ -29,8 +29,12 @@ Route::post('/articles/{id}/update', [ArticleController::class, 'update'])->name
 // Events
 Route::get('/event/publish', [EventController::class, 'showEditor'])->name('event.showEditor');
 Route::post('/event/publish', [EventController::class, 'publish'])->name('event.publish');
-Route::get('/events/{id}', [ArticleController::class, 'showEvent'])->name('event.showEvent');
-
+Route::get('/events/{id}', [EventController::class, 'showEvent'])->name('event.showEvent');
+Route::get('/events', [EventController::class, 'listEvents'])->name('article.listArticles');
+Route::delete('/events/{id}', [EventController::class, 'destroy'])->name('event.destroy');
+Route::get('/events/{id}/edit', [EventController::class, 'edit'])->name('event.edit');
+Route::post('/events/{id}/update', [EventController::class, 'update'])->name('event.update');
+Route::delete('/events/{id}', [EventController::class, 'destroy'])->name('event.destroy');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

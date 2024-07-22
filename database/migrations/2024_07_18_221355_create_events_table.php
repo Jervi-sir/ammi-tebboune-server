@@ -18,7 +18,9 @@ return new class extends Migration
             $table->text('content')->nullable();
             $table->date('event_date')->nullable();
             $table->string('location', 255)->nullable();
+            $table->string('wilaya', 255)->nullable();
             $table->string('thumbnail', 255)->nullable();
+            $table->integer('nb_views')->default(0);
             $table->timestamps();
         });
     }
