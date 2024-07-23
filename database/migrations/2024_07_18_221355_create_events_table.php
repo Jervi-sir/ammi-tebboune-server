@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title', 255);
             $table->text('summary')->nullable();
             $table->text('content')->nullable();
+            $table->integer('time_to_read_minutes')->default(1);
             $table->date('event_date')->nullable();
             $table->string('location', 255)->nullable();
             $table->string('wilaya', 255)->nullable();

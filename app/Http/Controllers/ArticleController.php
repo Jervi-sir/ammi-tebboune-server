@@ -109,7 +109,7 @@ class ArticleController extends Controller
         // dd($data);
         // Extract base64 images and save them
         $content = $data['content'];
-        $content = $this->saveImagesAndReplaceSrc($content);
+        $content = saveImagesAndReplaceSrc($content);
         // Save the updated content and other data
         // Assuming you have a model named `Article`
         $article = Article::create([
@@ -118,7 +118,8 @@ class ArticleController extends Controller
             'summary' => $data['summary'],
             'thumbnail' => $data['thumbnail']->store('thumbnails', 'public'),
             'content' => $content,
-            'published_date' => now()
+            'published_date' => now(),
+            'time_to_read_minutes' => countReadTime($content)
         ]);
 
         $url =  route('article.showArticle', ['id' => $article->id]);
@@ -153,7 +154,7 @@ class ArticleController extends Controller
         
         // Update the article data
         $content = $data['content'];
-        $content = $this->saveImagesAndReplaceSrc($content);
+        $content = saveImagesAndReplaceSrc($content);
         
         $article->update([
             'title' => $data['title'],
@@ -167,32 +168,6 @@ class ArticleController extends Controller
         return response()->json([
             'url' => $url
         ]);
-    }
-
-    private function saveImagesAndReplaceSrc($content)
-    {
-        $dom = new \DOMDocument();
-        @$dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        $images = $dom->getElementsByTagName('img');
-        
-        foreach ($images as $img) {
-            $base64Image = $img->getAttribute('src');
-        
-            if (strpos($base64Image, 'data:image') === 0) {
-                list($type, $data) = explode(';', $base64Image);
-                list(, $data)      = explode(',', $data);
-                $decodedImageData = base64_decode($data);
-                // Generate a filename, usually with a timestamp to avoid overwriting
-                $filename = 'image_' . time() . '.jpg'; // Assuming the image is a jpeg
-                // Save the image to the public storage disk
-                Storage::disk('public')->put('images/' . $filename, $decodedImageData);
-                // Return the URL to the saved image
-                $path = Storage::url('images/' . $filename);
-                $img->setAttribute('src', $path);
-            }
-        }
-    
-        return $dom->saveHTML();
     }
 
 }

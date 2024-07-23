@@ -15,9 +15,11 @@ a journal for Ammi Teboune
   - [x] update article
   - [x] delete article
 - [x] view article
+- [] time to read
 
 - [x] publish event
 - [x] view event
 - [x] list events
 - [x] edit event
 - [x] delete event
+- [] time to read

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title', 255);
             $table->text('content');
+            $table->integer('time_to_read_minutes')->default(1);
             $table->text('summary')->nullable();
             $table->string('thumbnail', 255)->nullable();
             $table->date('published_date')->nullable();

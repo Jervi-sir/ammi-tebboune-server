@@ -21,7 +21,7 @@ class EventController extends Controller
        
         // Extract base64 images and save them
         $content = $data['content'];
-        $content = $this->saveImagesAndReplaceSrc($content);
+        $content = saveImagesAndReplaceSrc($content);
         $event = Event::create([
             'title' => $data['title'],
             'summary' => $data['summary'],
@@ -30,6 +30,7 @@ class EventController extends Controller
             'location' => $data['location'],
             'wilaya' => $data['wilaya'],
             'thumbnail' => $data['thumbnail']->store('thumbnails', 'public'),
+            'time_to_read_minutes' => countReadTime($content)
         ]);
 
         $url =  route('event.showEvent', ['id' => $event->id]);
@@ -39,31 +40,7 @@ class EventController extends Controller
     }
 
 
-    private function saveImagesAndReplaceSrc($content)
-    {
-        $dom = new \DOMDocument();
-        @$dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        $images = $dom->getElementsByTagName('img');
-        
-        foreach ($images as $img) {
-            $base64Image = $img->getAttribute('src');
-        
-            if (strpos($base64Image, 'data:image') === 0) {
-                list($type, $data) = explode(';', $base64Image);
-                list(, $data)      = explode(',', $data);
-                $decodedImageData = base64_decode($data);
-                // Generate a filename, usually with a timestamp to avoid overwriting
-                $filename = 'image_' . time() . '.jpg'; // Assuming the image is a jpeg
-                // Save the image to the public storage disk
-                Storage::disk('public')->put('images/' . $filename, $decodedImageData);
-                // Return the URL to the saved image
-                $path = Storage::url('images/' . $filename);
-                $img->setAttribute('src', $path);
-            }
-        }
-    
-        return $dom->saveHTML();
-    }
+
 
 
     public function showEvent(Request $request, $id) 
@@ -143,7 +120,7 @@ class EventController extends Controller
         
         // Update the article data
         $content = $data['content'];
-        $content = $this->saveImagesAndReplaceSrc($content);
+        $content = saveImagesAndReplaceSrc($content);
         
         $event->update([
             'title' => $data['title'],
