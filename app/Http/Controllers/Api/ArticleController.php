@@ -10,14 +10,31 @@ use Carbon\Carbon;
 
 class ArticleController extends Controller
 {
+    public function listCategories(Request $request)
+    {
+        $categories = Category::all()->take(3);
+
+        $data['categories'] = [];
+        foreach ($categories as $key => $category) {
+            $data['categories'][$key] = [
+                'id' => $category->id,
+                'name' => $category->name,
+            ];
+        }
+
+        return response()->json([
+            'categories' => $data['categories']
+        ]);
+    }
+
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', 20);
         $query = Article::query();
         Carbon::setLocale('ar');
 
         if ($request->has('category') && $request->category) {
-            $category = Category::where('name', $request->category)->first();
+            $category = Category::where('code', $request->category)->first();
             $query->where('category_id', $category->id);
         }
 

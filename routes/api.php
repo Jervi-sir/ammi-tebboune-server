@@ -11,6 +11,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
+Route::get('/list-categories', [ArticleController::class, 'listCategories']);
+
 Route::get('/articles', [ArticleController::class, 'index']);
 Route::get('/hot-topic', [ArticleController::class, 'hotTopic']);
 Route::get('/articles/{id}', [ArticleController::class, 'show']);
