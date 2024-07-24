@@ -29,7 +29,7 @@ class EventController extends Controller
             'event_date' => $data['event_date'],
             'location' => $data['location'],
             'wilaya' => $data['wilaya'],
-            'thumbnail' => $data['thumbnail']->store('thumbnails', 'public'),
+            'thumbnail' => saveThumbnailBase64($data['thumbnail']),
             'time_to_read_minutes' => countReadTime($content)
         ]);
 
@@ -39,10 +39,6 @@ class EventController extends Controller
         ]);
     }
 
-
-
-
-
     public function showEvent(Request $request, $id) 
     {
         $event = Event::find($id);
@@ -51,7 +47,7 @@ class EventController extends Controller
             'id' => $event->id,
             'title' => $event->title,
             'summary' => $event->summary,
-            'content' => $event->content,
+            'content' => changeImagesUrlInContentServer($event->content),
             'event_date' => $event->event_date,
             'location' => $event->location,
             'wilaya' => $event->wilaya,
@@ -108,8 +104,21 @@ class EventController extends Controller
     {
         $event = Event::findOrFail($id);
     
+        $data['events'] = [
+            'id' => $event->id,
+            'title' => $event->title,
+            'summary' => $event->summary,
+            'location' => $event->location,
+            'wilaya' => $event->wilaya,
+            'thumbnail' => '/storage/' . $event->thumbnail,
+            'created_at' => $event->created_at,
+            'event_date' => $event->event_date,
+            'nb_views' => $event->nb_views,
+            'content' => changeImagesUrlInContentServer($event->content),
+        ];
+
         return Inertia::render('Events/EditEvent', [
-            'event' => $event,
+            'event' => $data['events'],
         ]);
     }
     
@@ -125,7 +134,7 @@ class EventController extends Controller
         $event->update([
             'title' => $data['title'],
             'summary' => $data['summary'],
-            'thumbnail' => $data['thumbnail'] ? $data['thumbnail']->store('thumbnails', 'public') : $event->thumbnail,
+            'thumbnail' => $request->has('thumbnail') ? saveThumbnailBase64($data['thumbnail']) : $event->thumbnail,
             'content' => $content,
             'wilaya' => $data['wilaya'],
             'location' => $data['location'],

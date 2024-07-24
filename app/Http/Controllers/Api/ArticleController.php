@@ -113,7 +113,7 @@ class ArticleController extends Controller
             'category_id' => $article->category_id,
             'created_at' => Carbon::parse($article->created_at)->translatedFormat('d-m-Y H:i'),
             'nb_views' => $article->nb_views,
-            'content' => changeImagesUrlInContent($article->content),
+            'content' => changeImagesUrlInContentAPI($article->content),
             'category' => $article->category->name,
             'time_to_read_minutes' => $article->time_to_read_minutes
         ];

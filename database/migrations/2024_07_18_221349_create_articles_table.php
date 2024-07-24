@@ -13,16 +13,18 @@ return new class extends Migration
     {
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 255);
-            $table->text('content');
-            $table->integer('time_to_read_minutes')->default(1);
+            $table->text('title');
+            $table->longText('content');
             $table->text('summary')->nullable();
-            $table->string('thumbnail', 255)->nullable();
+            $table->text('thumbnail')->nullable();
             $table->date('published_date')->nullable();
+            $table->integer('time_to_read_minutes')->default(1);
             $table->integer('nb_views')->default(0);
             $table->foreignId('category_id');
+
             $table->bigInteger('author_id')->nullable();
             $table->foreign('author_id')->references('id')->on('users');
+
             $table->timestamps();
         });
     }

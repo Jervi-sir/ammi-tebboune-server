@@ -12,10 +12,7 @@ import {
   SelectValue,
 } from "@/Components/ui/select";
 import { Textarea } from '@/Components/ui/textarea';
-import Cropper from 'react-easy-crop';
-import { Area } from 'react-easy-crop/types';
 import axios from 'axios';
-import imageCompression from 'browser-image-compression';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/Components/ui/button';
 import { Head } from '@inertiajs/react';
@@ -25,9 +22,10 @@ import ImageUploader from '@/Components/dashboard/ImageCropper';
 import ArticleEditor from '@/Components/dashboard/ArticleEditor';
 import { compressBase64Images, getCroppedImg } from '@/lib/ImageUtils';
 import { format } from 'date-fns';
+import processImageUrlToBase64, { isBase64 } from '@/lib/processImageUrlToBase64';
 
 export default function EditEvent({ event }) {
-  const [preview, setPreview] = useState(event.thumbnail ? `/storage/${event.thumbnail}` : null);
+  const [preview, setPreview] = useState(event.thumbnail ? `${event.thumbnail}` : null);
   const [croppedArea, setCroppedArea] = useState(null);
 
   const [isFetching, setIsFetching] = useState(false);
@@ -45,6 +43,7 @@ export default function EditEvent({ event }) {
 
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
+
     setIsFetching(true);
     setErrorMessage('');
 
@@ -54,14 +53,18 @@ export default function EditEvent({ event }) {
       setIsFetching(false);
       return;
     }
+
     const formattedDate = data.event_date ? format(data.event_date, 'yyyy-MM-dd') : null;
 
     // Compress images inside the content
     const compressedContent = await compressBase64Images(data.content);
-    const croppedImage = await getCroppedImg(preview, croppedArea);
+    // const croppedImage = await getCroppedImg(preview, croppedArea);
     const formData = new FormData();
     formData.append('title', data.title);
-    formData.append('thumbnail', croppedImage);
+    // formData.append('thumbnail', croppedImage);
+    if(data.thumbnail !== null) {
+      formData.append('thumbnail', data.thumbnail);
+    }
     formData.append('summary', data.summary);
     formData.append('content', compressedContent);
     formData.append('wilaya', data.wilaya);

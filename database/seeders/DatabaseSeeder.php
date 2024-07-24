@@ -29,15 +29,15 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         $this->call([
-            UsersTableSeeder::class,
+            // UsersTableSeeder::class,
             CategoriesTableSeeder::class,
-            ArticlesTableSeeder::class,
-            EventsTableSeeder::class,
-            AchievementsTableSeeder::class,
-            ContactSubmissionsTableSeeder::class,
-            VolunteerApplicationsTableSeeder::class,
-            DonationsTableSeeder::class,
-            SocialMediaPostsTableSeeder::class,
+            // ArticlesTableSeeder::class,
+            // EventsTableSeeder::class,
+            // AchievementsTableSeeder::class,
+            // ContactSubmissionsTableSeeder::class,
+            // VolunteerApplicationsTableSeeder::class,
+            // DonationsTableSeeder::class,
+            // SocialMediaPostsTableSeeder::class,
         ]);
     }
 }

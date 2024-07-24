@@ -50,7 +50,7 @@ export default function DashboardLayout({ title = "", children }) {
   };
 
   useEffect(() => {
-    console.log('url: ', url);
+
   }, [])
 
   return (
@@ -80,9 +80,9 @@ export default function DashboardLayout({ title = "", children }) {
                       {menu.name}
                     </a>
                     :
-                    <>
+                    <div key={index}>
                       <hr />
-                    </>
+                    </div>
                   ))
                 }
               </nav>
@@ -125,9 +125,9 @@ export default function DashboardLayout({ title = "", children }) {
                         {menu.name}
                       </a>
                       :
-                      <>
+                      <div key={index}>
                         <hr />
-                      </>
+                      </div>
                     ))
                   }
                 </nav>

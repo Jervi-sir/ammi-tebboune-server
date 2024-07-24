@@ -18,6 +18,7 @@ import { Head } from '@inertiajs/react';
 import ArticleEditor from '@/Components/dashboard/ArticleEditor';
 import ImageUploader from '@/Components/dashboard/ImageCropper';
 import { compressBase64Images, getCroppedImg } from '@/lib/ImageUtils';
+import { compressImagesInContent } from '@/lib/compressHtml';
 
 export default function PublishArticle({ categories }) {
   const [preview, setPreview] = useState(null);
@@ -25,6 +26,7 @@ export default function PublishArticle({ categories }) {
 
   const [isFetching, setIsFetching] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
 
   const [data, setData] = useState({
     title: '',
@@ -46,11 +48,12 @@ export default function PublishArticle({ categories }) {
     }
 
     const compressedContent = await compressBase64Images(data.content);
-    const croppedImage = await getCroppedImg(preview, croppedArea);
+    // const croppedImage = await getCroppedImg(preview, croppedArea);
     const formData = new FormData();
     formData.append('title', data.title);
     formData.append('category', data.category);
-    formData.append('thumbnail', croppedImage);
+    // formData.append('thumbnail', croppedImage);
+    formData.append('thumbnail', preview);
     formData.append('summary', data.summary);
     formData.append('content', compressedContent);
 
@@ -90,7 +93,10 @@ export default function PublishArticle({ categories }) {
                 onChange={(e) => setData((prevData) => ({ ...prevData, title: e.target.value }))}
                 required
               />
-              <Select onValueChange={(e) => setData((prevData) => ({ ...prevData, category: e }))} required>
+              <Select 
+                onValueChange={(e) => setData((prevData) => ({ ...prevData, category: e }))} 
+                required
+              >
                 <SelectTrigger className="">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>

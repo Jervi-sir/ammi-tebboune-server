@@ -60,7 +60,7 @@ class EventController extends Controller
             'created_at_humanly_readable' => Carbon::parse($event->created_at)->diffForHumans(),
             'created_at' => Carbon::parse($event->created_at)->translatedFormat('d-m-Y H:i'),
             'nb_views' => $event->nb_views,
-            'content' => changeImagesUrlInContent($event->content),
+            'content' => changeImagesUrlInContentAPI($event->content),
             'location' => $event->location,
             'wilaya' => $event->wilaya,
             'event_date_humanly_readable' => Carbon::parse($event->event_date)->diffForHumans(), // Format date to numeric format

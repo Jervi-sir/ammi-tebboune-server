@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Input } from '@/Components/ui/input';
 import Cropper from 'react-easy-crop';
 import { Area } from 'react-easy-crop/types';
+import imageCompression from 'browser-image-compression';
 
 interface ImageUploaderProps {
   setCroppedArea: (area: Area) => void;
@@ -14,23 +15,38 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ setCroppedArea, setPrevie
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setLocalPreview(reader.result);
-        if (setPreview) {
-          setPreview(reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressedFile = await imageCompression(file, {
+          maxSizeMB: 0.5,
+          maxWidthOrHeight: 480,
+          useWebWorker: true,
+          maxIteration: 10,
+          initialQuality: 0.6,
+        });
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setLocalPreview(reader.result);
+          if (setPreview) {
+            setPreview(reader.result);
+          }
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error('Error compressing image:', error);
+      }
     }
   };
 
-  const onCropComplete = useCallback((croppedArea: Area, croppedAreaPixels: Area) => {
-    setCroppedArea(croppedAreaPixels);
-  }, [setCroppedArea]);
+  const onCropComplete = useCallback(
+    (croppedArea: Area, croppedAreaPixels: Area) => {
+      setCroppedArea(croppedAreaPixels);
+    },
+    [setCroppedArea]
+  );
 
   return (
     <div>
@@ -47,13 +63,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ setCroppedArea, setPrevie
           />
         )}
       </div>
-      <Input
-        id="thumbnail"
-        type="file"
-        accept="image/*"
-        onChange={handleImageChange}
-        required={!initialPreview}
-      />
+      <Input id="thumbnail" type="file" accept="image/*" onChange={handleImageChange} />
     </div>
   );
 };

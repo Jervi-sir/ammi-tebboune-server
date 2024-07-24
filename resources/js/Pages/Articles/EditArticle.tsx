@@ -22,9 +22,10 @@ import { Head } from '@inertiajs/react';
 import ImageUploader from '@/Components/dashboard/ImageCropper';
 import ArticleEditor from '@/Components/dashboard/ArticleEditor';
 import { compressBase64Images, getCroppedImg } from '@/lib/ImageUtils';
+import { isBase64 } from '@/lib/processImageUrlToBase64';
 
 export default function EditArticle({ article, categories }) {
-  const [preview, setPreview] = useState(article.thumbnail ? `/storage/${article.thumbnail}` : null);
+  const [preview, setPreview] = useState(article.thumbnail ? `${article.thumbnail}` : null);
   const [croppedArea, setCroppedArea] = useState(null);
 
   const [isFetching, setIsFetching] = useState(false);
@@ -49,15 +50,17 @@ export default function EditArticle({ article, categories }) {
       setIsFetching(false);
       return;
     }
-    console.log('data.content: ', data.content);
     
     // Compress images inside the content
     const compressedContent = await compressBase64Images(data.content);
-    const croppedImage = await getCroppedImg(preview, croppedArea);
+    // const croppedImage = await getCroppedImg(preview, croppedArea);
     const formData = new FormData();
     formData.append('title', data.title);
     formData.append('category', data.category);
-    formData.append('thumbnail', croppedImage);
+    // formData.append('thumbnail', croppedImage);
+    if(data.thumbnail !== null) {
+      formData.append('thumbnail', data.thumbnail);
+    }
     formData.append('summary', data.summary);
     formData.append('content', compressedContent);
 

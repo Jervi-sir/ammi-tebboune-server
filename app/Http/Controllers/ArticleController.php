@@ -67,7 +67,7 @@ class ArticleController extends Controller
             'thumbnail' => '/storage/' . $article->thumbnail,
             'category' => $article->category,
             'nb_views' => $article->nb_views,
-            'content' => $article->content,
+            'content' => changeImagesUrlInContentServer($article->content),
             'created_at' => Carbon::parse($article->created_at)->diffForHumans(), // Format date to numeric format
         ];
 
@@ -106,17 +106,15 @@ class ArticleController extends Controller
     public function publish(Request $request)
     {
         $data = $request->all();
-        // dd($data);
+
         // Extract base64 images and save them
         $content = $data['content'];
         $content = saveImagesAndReplaceSrc($content);
-        // Save the updated content and other data
-        // Assuming you have a model named `Article`
         $article = Article::create([
             'title' => $data['title'],
             'category_id' => Category::where('name', $data['category'])->first()->id,
             'summary' => $data['summary'],
-            'thumbnail' => $data['thumbnail']->store('thumbnails', 'public'),
+            'thumbnail' => saveThumbnailBase64($data['thumbnail']),
             'content' => $content,
             'published_date' => now(),
             'time_to_read_minutes' => countReadTime($content)
@@ -139,9 +137,20 @@ class ArticleController extends Controller
                 'name' => $category->name,
             ];
         }
+
+        $data['article'] = [
+            'id' => $article->id,
+            'title' => $article->title,
+            'summary' => $article->summary,
+            'thumbnail' => '/storage/' . $article->thumbnail,
+            'category' => $article->category,
+            'nb_views' => $article->nb_views,
+            'content' => changeImagesUrlInContentServer($article->content),
+            'created_at' => $article->created_at, // Format date to numeric format
+        ];
     
         return Inertia::render('Articles/EditArticle', [
-            'article' => $article,
+            'article' => $data['article'],
             'categories' => $data['categories'],
         ]);
     }
@@ -151,7 +160,7 @@ class ArticleController extends Controller
     {
         $article = Article::findOrFail($id);
         $data = $request->all();
-        
+
         // Update the article data
         $content = $data['content'];
         $content = saveImagesAndReplaceSrc($content);
@@ -160,7 +169,7 @@ class ArticleController extends Controller
             'title' => $data['title'],
             'category_id' => Category::where('name', $data['category'])->first()->id,
             'summary' => $data['summary'],
-            'thumbnail' => $data['thumbnail'] ? $data['thumbnail']->store('thumbnails', 'public') : $article->thumbnail,
+            'thumbnail' => $request->has('thumbnail') ? saveThumbnailBase64($data['thumbnail']) : $article->thumbnail,
             'content' => $content,
         ]);
 

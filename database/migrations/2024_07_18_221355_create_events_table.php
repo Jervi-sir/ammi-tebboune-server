@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 255);
+            $table->text('title');
             $table->text('summary')->nullable();
-            $table->text('content')->nullable();
+            $table->longText('content')->nullable();
             $table->integer('time_to_read_minutes')->default(1);
             $table->date('event_date')->nullable();
-            $table->string('location', 255)->nullable();
-            $table->string('wilaya', 255)->nullable();
-            $table->string('thumbnail', 255)->nullable();
+            $table->text('location')->nullable();
+            $table->text('wilaya')->nullable();
+            $table->text('thumbnail')->nullable();
             $table->integer('nb_views')->default(0);
             $table->timestamps();
         });

@@ -13,12 +13,17 @@ class CategoriesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $categories = ['Politics', 'Economy', 'Health', 'Education', 'Environment'];
-
-        foreach ($categories as $category) {
-            Category::create([
-                'name' => $category,
-            ]);
-        }
+        Category::create([
+            'name' => 'أحدث الأخبار',
+            'code' => 'latest_news',
+        ]);
+        Category::create([
+            'name' => 'الإنجازات',
+            'code' => 'achievements',
+        ]);
+        Category::create([
+            'name' => 'الأحداث الأخيرة',
+            'code' => 'news',
+        ]);
     }
 }

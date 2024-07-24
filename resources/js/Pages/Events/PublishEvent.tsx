@@ -63,10 +63,11 @@ export default function PublishEvent() {
     }
 
     const compressedContent = await compressBase64Images(data.content);
-    const croppedImage = await getCroppedImg(preview, croppedArea);
+    // const croppedImage = await getCroppedImg(preview, croppedArea);
     const formData = new FormData();
     formData.append('title', data.title);
-    formData.append('thumbnail', croppedImage);
+    // formData.append('thumbnail', croppedImage);
+    formData.append('thumbnail', preview);
     formData.append('summary', data.summary);
     formData.append('content', compressedContent);
     formData.append('event_date', JSON.stringify(selectedDate, null, 2));

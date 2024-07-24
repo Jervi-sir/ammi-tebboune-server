@@ -29,7 +29,8 @@ function saveImagesAndReplaceSrc($content)
             // Save the image to the public storage disk
             Storage::disk('public')->put('images/' . $filename, $decodedImageData);
             // Return the URL to the saved image
-            $path = Storage::url('images/' . $filename);
+            // $path = Storage::url('images/' . $filename);
+            $path= 'images/' . $filename;
             $img->setAttribute('src', $path);
         }
     }
@@ -37,7 +38,24 @@ function saveImagesAndReplaceSrc($content)
     return $dom->saveHTML();
 }
 
-function changeImagesUrlInContent($content)
+function saveThumbnailBase64($base64Image)
+{
+    
+    list($type, $data) = explode(';', $base64Image);
+    list(, $data)      = explode(',', $data);
+    $decodedImageData = base64_decode($data);
+    // Generate a filename, usually with a timestamp to avoid overwriting
+    $filename = 'image_' . time() . '.jpg'; // Assuming the image is a jpeg
+    // Save the image to the public storage disk
+    Storage::disk('public')->put('thumbnails/' . $filename, $decodedImageData);
+    // Return the URL to the saved image
+    // $path = Storage::url('thumbnail/' . $filename);
+    $path= 'thumbnails/' . $filename;
+
+    return $path;
+}
+
+function changeImagesUrlInContentAPI($content)
 {
     $dom = new \DOMDocument();
     @$dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
@@ -46,7 +64,24 @@ function changeImagesUrlInContent($content)
     $images = $dom->getElementsByTagName('img');
     foreach ($images as $img) {
         $src = $img->getAttribute('src');
-        $img->setAttribute('src', url($src));
+        $img->setAttribute('src', url('/storage/'. $src));
+    }
+
+    $content = $dom->saveHTML();
+
+    return $content;
+}
+
+function changeImagesUrlInContentServer($content)
+{
+    $dom = new \DOMDocument();
+    @$dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+    // Get all img tags and update their src attributes
+    $images = $dom->getElementsByTagName('img');
+    foreach ($images as $img) {
+        $src = $img->getAttribute('src');
+        $img->setAttribute('src', '/storage/'. $src);
     }
 
     $content = $dom->saveHTML();
