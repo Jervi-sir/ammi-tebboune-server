@@ -29,15 +29,14 @@ class ArticleController extends Controller
 
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 20);
+        $perPage = $request->input('per_page', 5);
         $query = Article::query();
         Carbon::setLocale('ar');
 
-        if ($request->has('category') && $request->category) {
-            $category = Category::where('code', $request->category)->first();
-            $query->where('category_id', $category->id);
-        }
-
+        // if ($request->has('category') && $request->category) {
+        //     $category = Category::where('code', $request->category)->first();
+        //     $query->where('category_id', $category->id);
+        // }
         $articles = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
         $data = $articles->map(function ($article) {
@@ -57,15 +56,18 @@ class ArticleController extends Controller
             ];
         });
 
+        $nextPageNumber = $articles->currentPage() < $articles->lastPage() ? $articles->currentPage() + 1 : null;
         return response()->json([
             'articles' => $data,
             'pagination' => [
                 'total' => $articles->total(),
                 'perPage' => $articles->perPage(),
                 'currentPage' => $articles->currentPage(),
+                'nextPage' => $articles->nextPageUrl() !== null ? $articles->currentPage() + 1 : null,
                 'lastPage' => $articles->lastPage(),
                 'nextPageUrl' => $articles->nextPageUrl(),
                 'previousPageUrl' => $articles->previousPageUrl(),
+                'nextPageNumber' => $nextPageNumber,
             ]
         ]);
     }
@@ -119,7 +121,13 @@ class ArticleController extends Controller
         ];
 
         return response()->json([
-            'article' => $data
+            'article' => $data,
+            'category' => [
+                'id' => $article->category->id,
+                'name' => $article->category->name,
+                'code' => $article->category->code,
+            ],
+            
         ]);
     }
 }

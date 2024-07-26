@@ -42,10 +42,22 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ setCroppedArea, setPrevie
   };
 
   const onCropComplete = useCallback(
-    (croppedArea: Area, croppedAreaPixels: Area) => {
+    async (croppedArea: Area, croppedAreaPixels: Area) => {
       setCroppedArea(croppedAreaPixels);
+      try {
+        const croppedImage = await getCroppedImg(preview as string, croppedAreaPixels);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          if (setPreview) {
+            setPreview(reader.result);
+          }
+        };
+        reader.readAsDataURL(croppedImage as Blob);
+      } catch (error) {
+        console.error('Error cropping image:', error);
+      }
     },
-    [setCroppedArea]
+    [preview, setCroppedArea, setPreview]
   );
 
   return (
@@ -69,3 +81,48 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ setCroppedArea, setPrevie
 };
 
 export default ImageUploader;
+
+// Helper function to create an image from a URL
+function createImage(url: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener('load', () => resolve(image));
+    image.addEventListener('error', (error) => reject(error));
+    image.setAttribute('crossOrigin', 'anonymous'); // to avoid CORS issues, if needed
+    image.src = url;
+  });
+}
+
+// Function to get the cropped image
+async function getCroppedImg(imageSrc: string, pixelCrop: Area) {
+  const image = await createImage(imageSrc);
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = pixelCrop.width;
+  canvas.height = pixelCrop.height;
+
+  ctx.drawImage(
+    image,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    pixelCrop.width,
+    pixelCrop.height
+  );
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        console.error('Canvas is empty');
+        return;
+      }
+      blob.name = 'cropped.jpeg';
+      const file = new File([blob], 'cropped.jpeg', { type: 'image/jpeg' });
+      resolve(file);
+    }, 'image/jpeg');
+  });
+}

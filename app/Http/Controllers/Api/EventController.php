@@ -34,8 +34,10 @@ class EventController extends Controller
             ];
         });
 
+        $nextPageNumber = $events->currentPage() < $events->lastPage() ? $events->currentPage() + 1 : null;
+
         return response()->json([
-            'data' => $data,
+            'events' => $data,
             'pagination' => [
                 'total' => $events->total(),
                 'perPage' => $events->perPage(),
@@ -43,6 +45,7 @@ class EventController extends Controller
                 'lastPage' => $events->lastPage(),
                 'nextPageUrl' => $events->nextPageUrl(),
                 'previousPageUrl' => $events->previousPageUrl(),
+                'nextPageNumber' => $nextPageNumber,
             ]
         ]);
     }
