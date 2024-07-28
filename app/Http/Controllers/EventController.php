@@ -51,7 +51,7 @@ class EventController extends Controller
             'event_date' => $event->event_date,
             'location' => $event->location,
             'wilaya' => $event->wilaya,
-            'thumbnail' => '/storage/' . $event->thumbnail,
+            'thumbnail' => makeUrlImageWithDomain($event->thumbnail),
             'nb_views' => $event->nb_views,
             'created_at' => Carbon::parse($event->created_at)->diffForHumans(), // Format date to numeric format
         ];
@@ -78,7 +78,7 @@ class EventController extends Controller
                 'summary' => $event->summary,
                 'location' => $event->location,
                 'wilaya' => $event->wilaya,
-                'thumbnail' => '/storage/' . $event->thumbnail,
+                'thumbnail' => makeUrlImageWithDomain($event->thumbnail),
                 'created_at' => Carbon::parse($event->created_at)->translatedFormat('d-m-Y H:i'), // Format date to numeric format
                 'event_date' => Carbon::parse($event->event_date)->translatedFormat('d-m-Y H:i'), // Format date to numeric format
                 'nb_views' => $event->nb_views,
@@ -110,7 +110,7 @@ class EventController extends Controller
             'summary' => $event->summary,
             'location' => $event->location,
             'wilaya' => $event->wilaya,
-            'thumbnail' => '/storage/' . $event->thumbnail,
+            'thumbnail' => makeUrlImageWithDomain($event->thumbnail),
             'created_at' => $event->created_at,
             'event_date' => $event->event_date,
             'nb_views' => $event->nb_views,

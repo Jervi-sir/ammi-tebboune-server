@@ -18,7 +18,7 @@ export const compressImagesInContent = async (htmlContent: string): Promise<stri
     try {
       const imageUrl = img.src;
       const response = await fetch(imageUrl);
-      const blob = await response.blob();
+      const blob = await response.blob() as any;  //added any here
       
       // Adjust compression options for better results
       const compressedBlob = await imageCompression(blob, { 

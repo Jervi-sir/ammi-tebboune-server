@@ -44,7 +44,7 @@ class ArticleController extends Controller
                 'id' => $article->id,
                 'title' => $article->title,
                 'summary' => $article->summary,
-                'thumbnail' => url('/storage/' . $article->thumbnail),
+                'thumbnail' => makeUrlImageWithDomain($article->thumbnail),
                 'published_date_humanly_readable' => Carbon::parse($article->published_date)->diffForHumans(),
                 'published_date' => Carbon::parse($article->published_date)->translatedFormat('d-m-Y H:i'),
                 'category_id' => $article->category_id,
@@ -83,7 +83,7 @@ class ArticleController extends Controller
                 'id' => $article->id,
                 'title' => $article->title,
                 'summary' => $article->summary,
-                'thumbnail' => url('/storage/' . $article->thumbnail),
+                'thumbnail' => makeUrlImageWithDomain($article->thumbnail),
                 'published_date_humanly_readable' => Carbon::parse($article->published_date)->diffForHumans(),
                 'published_date' => Carbon::parse($article->published_date)->translatedFormat('d-m-Y H:i'),
                 'category_id' => $article->category_id,
@@ -106,13 +106,16 @@ class ArticleController extends Controller
     {
         $article = Article::findOrFail($id);
 
+        Carbon::setLocale('ar');
         $data = [
             'id' => $article->id,
             'title' => $article->title,
             'summary' => $article->summary,
-            'thumbnail' => url('/storage/' . $article->thumbnail),
+            'thumbnail' => makeUrlImageWithDomain($article->thumbnail),
+            'published_date_humanly_readable' => Carbon::parse($article->published_date)->diffForHumans(),
             'published_date' => Carbon::parse($article->published_date)->translatedFormat('d-m-Y H:i'),
             'category_id' => $article->category_id,
+            'created_at_humanly_readable' => Carbon::parse($article->created_at)->diffForHumans(),
             'created_at' => Carbon::parse($article->created_at)->translatedFormat('d-m-Y H:i'),
             'nb_views' => $article->nb_views,
             'content' => changeImagesUrlInContentAPI($article->content),

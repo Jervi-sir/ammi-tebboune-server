@@ -23,12 +23,13 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({ initialContent, onContent
           'emoticons', 'help', 'quickbars', 'autoresize',
           'codesample', 'directionality', 'importcss', 'nonbreaking',
           'pagebreak', 'save', 
-          'editimage', 
+          'editimage',  'pageembed'
         ],
         toolbar: `undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify |
          fontselect fontsizeselect formatselect | numlist bullist outdent indent |
           forecolor backcolor removeformat ltr rtl | pagebreak | charmap emoticons |
-           fullscreen preview save print | insertfile image media template link anchor codesample |
+           fullscreen preview save print | insertfile image media template link anchor pageembed codesample |
+           
           `,
         content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
         file_picker_types: 'image',

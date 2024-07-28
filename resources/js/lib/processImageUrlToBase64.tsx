@@ -24,7 +24,7 @@ const blobToBase64 = (blob) => {
 };
 
 const compressImage = async (base64) => {
-  const blob = await fetch(base64).then(res => res.blob());
+  const blob = await fetch(base64).then(res => res.blob()) as any;  // added any herer
   const compressedBlob = await imageCompression(blob, {
     maxSizeMB: 0.5,
     maxWidthOrHeight: 480,

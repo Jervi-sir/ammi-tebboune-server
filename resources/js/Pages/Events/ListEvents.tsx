@@ -181,7 +181,6 @@ export default function ListEvents({ events, pagination,  }) {
                   e.preventDefault();
                   handlePageChange(pagination.previousPageUrl);
                 }}
-                disabled={!pagination.previousPageUrl}
               />
             </PaginationItem>
             {renderPaginationLinks()}
@@ -197,7 +196,6 @@ export default function ListEvents({ events, pagination,  }) {
                   e.preventDefault();
                   handlePageChange(pagination.nextPageUrl);
                 }}
-                disabled={!pagination.nextPageUrl}
               />
             </PaginationItem>
           </PaginationContent>

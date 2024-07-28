@@ -13,7 +13,6 @@ import {
 } from "@/Components/ui/select";
 import { Textarea } from '@/Components/ui/textarea';
 import Cropper from 'react-easy-crop';
-import { Area } from 'react-easy-crop/types';
 import axios from 'axios';
 import imageCompression from 'browser-image-compression';
 import { Loader2 } from 'lucide-react';

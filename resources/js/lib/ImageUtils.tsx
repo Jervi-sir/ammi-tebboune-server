@@ -2,7 +2,7 @@ import { Area } from "react-easy-crop";
 import imageCompression from 'browser-image-compression';
 
 export async function getCroppedImg(imageSrc, pixelCrop: Area) {
-  const image = await createImage(imageSrc);
+  const image = await createImage(imageSrc) as CanvasImageSource; //HTMLImageElement;
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
 
@@ -27,7 +27,7 @@ export async function getCroppedImg(imageSrc, pixelCrop: Area) {
         console.error('Canvas is empty');
         return;
       }
-      blob.name = 'cropped.jpeg';
+      // blob.name = 'cropped.jpeg';
       const file = new File([blob], 'cropped.jpeg', { type: 'image/jpeg' });
       resolve(file);
     }, 'image/jpeg');
@@ -62,7 +62,7 @@ export const compressBase64Images = async (content) => {
 };
 
 const compressBase64Image = async (base64, mimeType) => {
-  const file = await base64ToFile(base64, mimeType);
+  const file = await base64ToFile(base64, mimeType) as any; //added any here
   const compressedFile = await imageCompression(file, {
     maxSizeMB: 1,
     maxWidthOrHeight: 800,
@@ -84,7 +84,8 @@ const fileToBase64 = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onloadend = () => {
-      const base64String = reader.result.split(',')[1];
+      const base64array = reader.result as any; //added any here
+      const base64String = base64array.split(',')[1];
       resolve(base64String);
     };
     reader.onerror = reject;

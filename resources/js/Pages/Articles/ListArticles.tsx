@@ -192,7 +192,6 @@ export default function PublishArticle({ articles, pagination, categories, selec
                   e.preventDefault();
                   handlePageChange(pagination.previousPageUrl);
                 }}
-                disabled={!pagination.previousPageUrl}
               />
             </PaginationItem>
             {renderPaginationLinks()}
@@ -208,7 +207,6 @@ export default function PublishArticle({ articles, pagination, categories, selec
                   e.preventDefault();
                   handlePageChange(pagination.nextPageUrl);
                 }}
-                disabled={!pagination.nextPageUrl}
               />
             </PaginationItem>
           </PaginationContent>

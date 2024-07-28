@@ -29,7 +29,7 @@ class ArticleController extends Controller
                 'id' => $article->id,
                 'title' => $article->title,
                 'summary' => $article->summary,
-                'thumbnail' => '/storage/' . $article->thumbnail,
+                'thumbnail' => makeUrlImageWithDomain($article->thumbnail),
                 'published_date' => Carbon::parse($article->published_date)->translatedFormat('d-m-Y H:i'), // Format date to numeric format
                 'category_id' => $article->category_id,
                 'created_at' => Carbon::parse($article->created_at)->translatedFormat('d-m-Y H:i'), // Format date to numeric format
@@ -64,7 +64,7 @@ class ArticleController extends Controller
             'id' => $article->id,
             'title' => $article->title,
             'summary' => $article->summary,
-            'thumbnail' => '/storage/' . $article->thumbnail,
+            'thumbnail' => makeUrlImageWithDomain($article->thumbnail),
             'category' => $article->category,
             'nb_views' => $article->nb_views,
             'content' => changeImagesUrlInContentServer($article->content),
@@ -142,7 +142,7 @@ class ArticleController extends Controller
             'id' => $article->id,
             'title' => $article->title,
             'summary' => $article->summary,
-            'thumbnail' => '/storage/' . $article->thumbnail,
+            'thumbnail' => makeUrlImageWithDomain($article->thumbnail),
             'category' => $article->category,
             'nb_views' => $article->nb_views,
             'content' => changeImagesUrlInContentServer($article->content),

@@ -64,7 +64,7 @@ function changeImagesUrlInContentAPI($content)
     $images = $dom->getElementsByTagName('img');
     foreach ($images as $img) {
         $src = $img->getAttribute('src');
-        $img->setAttribute('src', url('/storage/'. $src));
+        $img->setAttribute('src', makeUrlImageWithDomain($src));
     }
 
     $content = $dom->saveHTML();
@@ -81,10 +81,15 @@ function changeImagesUrlInContentServer($content)
     $images = $dom->getElementsByTagName('img');
     foreach ($images as $img) {
         $src = $img->getAttribute('src');
-        $img->setAttribute('src', '/storage/'. $src);
+        $img->setAttribute('src', makeUrlImageWithDomain($src));
     }
 
     $content = $dom->saveHTML();
 
     return $content;
+}
+
+function makeUrlImageWithDomain($path)
+{
+    return url('/storage/'. $path);
 }

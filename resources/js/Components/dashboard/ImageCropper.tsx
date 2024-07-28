@@ -1,11 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { Input } from '@/Components/ui/input';
 import Cropper from 'react-easy-crop';
-import { Area } from 'react-easy-crop/types';
 import imageCompression from 'browser-image-compression';
 
 interface ImageUploaderProps {
-  setCroppedArea: (area: Area) => void;
+  setCroppedArea: (area) => void;
   setPreview?: (preview: string | ArrayBuffer | null) => void;
   initialPreview?: string | null;
 }
@@ -42,7 +41,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ setCroppedArea, setPrevie
   };
 
   const onCropComplete = useCallback(
-    async (croppedArea: Area, croppedAreaPixels: Area) => {
+    async (croppedArea, croppedAreaPixels) => {
       setCroppedArea(croppedAreaPixels);
       try {
         const croppedImage = await getCroppedImg(preview as string, croppedAreaPixels);
@@ -94,7 +93,7 @@ function createImage(url: string): Promise<HTMLImageElement> {
 }
 
 // Function to get the cropped image
-async function getCroppedImg(imageSrc: string, pixelCrop: Area) {
+async function getCroppedImg(imageSrc: string, pixelCrop: any) {
   const image = await createImage(imageSrc);
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -120,7 +119,7 @@ async function getCroppedImg(imageSrc: string, pixelCrop: Area) {
         console.error('Canvas is empty');
         return;
       }
-      blob.name = 'cropped.jpeg';
+      //blob.name = 'cropped.jpeg';
       const file = new File([blob], 'cropped.jpeg', { type: 'image/jpeg' });
       resolve(file);
     }, 'image/jpeg');
