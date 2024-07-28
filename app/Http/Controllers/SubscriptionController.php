@@ -12,13 +12,13 @@ class SubscriptionController extends Controller
 
         $data = $request->all();
 
-        $existingSubscription = Subscription::where('endpoint', $data['endpoint'])->first();
+        $existingSubscription = Subscription::where('endpoint', $data['subscription']['endpoint'])->first();
 
         if (!$existingSubscription) {
             Subscription::create([
-                'endpoint' => $data['endpoint'],
-                'public_key' => $data['keys']['p256dh'],
-                'auth_token' => $data['keys']['auth'],
+                'endpoint' => $data['subscription']['endpoint'],
+                'public_key' => $data['subscription']['keys']['p256dh'],
+                'auth_token' => $data['subscription']['keys']['auth'],
             ]);
         }
 
