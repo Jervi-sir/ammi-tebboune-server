@@ -33,10 +33,10 @@ class ArticleController extends Controller
         $query = Article::query();
         Carbon::setLocale('ar');
 
-        // if ($request->has('category') && $request->category) {
-        //     $category = Category::where('code', $request->category)->first();
-        //     $query->where('category_id', $category->id);
-        // }
+        if ($request->has('category') && $request->category !== 'most_recent') {
+            $category = Category::where('code', $request->category)->first();
+            $query->where('category_id', $category->id);
+        }
         $articles = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
         $data = $articles->map(function ($article) {
@@ -123,6 +123,27 @@ class ArticleController extends Controller
             'time_to_read_minutes' => $article->time_to_read_minutes
         ];
 
+        $randomArticles = Article::where('id', '!=', $id)
+            ->inRandomOrder()
+            ->take(5)
+            ->get()
+            ->map(function ($randomArticle) {
+                return [
+                    'id' => $randomArticle->id,
+                    'title' => $randomArticle->title,
+                    'summary' => $randomArticle->summary,
+                    'thumbnail' => makeUrlImageWithDomain($randomArticle->thumbnail),
+                    'published_date_humanly_readable' => Carbon::parse($randomArticle->published_date)->diffForHumans(),
+                    'published_date' => Carbon::parse($randomArticle->published_date)->translatedFormat('d-m-Y H:i'),
+                    'category_id' => $randomArticle->category_id,
+                    'created_at' => Carbon::parse($randomArticle->created_at)->translatedFormat('d-m-Y H:i'),
+                    'created_at_humanly_readable' => Carbon::parse($randomArticle->created_at)->diffForHumans(),
+                    'nb_views' => $randomArticle->nb_views,
+                    'category' => $randomArticle->category->name,
+                    'time_to_read_minutes' => $randomArticle->time_to_read_minutes
+                ];
+            });
+
         return response()->json([
             'article' => $data,
             'category' => [
@@ -130,7 +151,8 @@ class ArticleController extends Controller
                 'name' => $article->category->name,
                 'code' => $article->category->code,
             ],
-            
+            'suggestions' => $randomArticles
+
         ]);
     }
 }

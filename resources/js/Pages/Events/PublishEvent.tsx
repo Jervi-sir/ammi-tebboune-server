@@ -84,7 +84,7 @@ export default function PublishEvent() {
       window.location.replace(newUrl);
 
     } catch (error) {
-      console.error('Error publishing article:', error);
+      console.error('Error publishing Event:', error);
     } finally {
       setIsFetching(false);
     }
@@ -98,8 +98,8 @@ export default function PublishEvent() {
   };
 
   return (
-    <DashboardLayout title='Add Article'>
-      <Head title="Create Article" />
+    <DashboardLayout title='Add Event'>
+      <Head title="Create Event" />
       
       <form onSubmit={handleSubmit} className='flex flex-1 flex-col'>
         <div className='flex flex-1 flex-col p-2 gap-3'>
@@ -133,7 +133,6 @@ export default function PublishEvent() {
                   value={data.summary}
                   onChange={handleSummaryChange}
                   maxLength={100}
-                  required
                 />
                 <span>{data.summary.length}/100</span>
               </div>
@@ -160,7 +159,7 @@ export default function PublishEvent() {
               Please wait
             </Button>
             :
-            <Button>Button</Button>
+            <Button>Publish Event</Button>
           }
         </div>
       </form>

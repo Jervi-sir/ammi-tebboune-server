@@ -160,7 +160,7 @@ export default function EditEvent({ event }) {
               Please wait
             </Button>
             :
-            <Button>Update Article</Button>
+            <Button>Update Event</Button>
           }
         </div>
       </form>

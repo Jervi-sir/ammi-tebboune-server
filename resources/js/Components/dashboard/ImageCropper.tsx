@@ -19,8 +19,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ setCroppedArea, setPrevie
     if (file) {
       try {
         const compressedFile = await imageCompression(file, {
-          maxSizeMB: 0.5,
-          maxWidthOrHeight: 480,
+          maxSizeMB: 2,
+          maxWidthOrHeight: 720,
           useWebWorker: true,
           maxIteration: 10,
           initialQuality: 0.6,

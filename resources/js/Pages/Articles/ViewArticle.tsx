@@ -1,5 +1,6 @@
 import { Button } from "@/Components/ui/button";
 import DashboardLayout from "@/Layouts/DashboardLayout";
+import { applyTailwindClasses } from "@/lib/applyTailwindClasses";
 import { Inertia } from "@inertiajs/inertia";
 import { Head } from "@inertiajs/react";
 
@@ -24,15 +25,15 @@ export default function ViewArticle({ article }) {
               />
             </div>
             <div className="space-y-2 not-prose">
-              <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
+              <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm font-medium text-muted-foreground" dir="rtl">
                 {article.category.name}
               </div>
-              <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
+              <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl" dir="rtl">
                 {article.title}
               </h1>
               <p className="text-muted-foreground">{article.created_at}</p>
             </div>
-            <div dangerouslySetInnerHTML={{ __html: article.content }} />
+            <div dir="rtl" dangerouslySetInnerHTML={{ __html: applyTailwindClasses(article.content) }} />
 
           </article>
         </div>

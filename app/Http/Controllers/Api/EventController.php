@@ -70,9 +70,29 @@ class EventController extends Controller
             'event_date' => $event->event_date, // Format date to numeric format
             'time_to_read_minutes' => $event->time_to_read_minutes
         ];
-
+        $randomEvents = Event::where('id', '!=', $id)
+            ->inRandomOrder()
+            ->take(5)
+            ->get()
+            ->map(function ($randomEvent) {
+                return [
+                    'id' => $randomEvent->id,
+                    'title' => $randomEvent->title,
+                    'summary' => $randomEvent->summary,
+                    'thumbnail' => makeUrlImageWithDomain($randomEvent->thumbnail),
+                    'created_at_humanly_readable' => Carbon::parse($randomEvent->created_at)->diffForHumans(),
+                    'created_at' => $randomEvent->created_at,
+                    'location' => $randomEvent->location,
+                    'wilaya' => $randomEvent->wilaya,
+                    'event_date_humanly_readable' => Carbon::parse($randomEvent->event_date)->diffForHumans(), // Format date to numeric format
+                    'event_date' => $randomEvent->event_date, // Format date to numeric format
+                    'nb_views' => $randomEvent->nb_views,
+                    'time_to_read_minutes' => $randomEvent->time_to_read_minutes
+                ];
+            });
         return response()->json([
-            'event' => $data
+            'event' => $data,
+            'suggestions' => $randomEvents
         ]);
     }
 }

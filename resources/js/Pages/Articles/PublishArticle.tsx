@@ -118,7 +118,6 @@ export default function PublishArticle({ categories }) {
                   value={data.summary}
                   onChange={handleSummaryChange}
                   maxLength={100}
-                  required
                 />
                 <span>{data.summary.length}/100</span>
               </div>
@@ -145,7 +144,7 @@ export default function PublishArticle({ categories }) {
               Please wait
             </Button>
             :
-            <Button>Button</Button>
+            <Button>Publish Article</Button>
           }
         </div>
       </form>
